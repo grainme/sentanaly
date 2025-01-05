@@ -47,7 +47,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
             Err(e) => eprintln!("Error fetching posts: {}", e),
         }
 
-        println!("Waiting 60 seconds before next fetch...");
-        tokio::time::sleep(std::time::Duration::from_secs(60)).await;
+        println!("Waiting 30 seconds before next fetch...");
+        tokio::time::sleep(std::time::Duration::from_secs(30)).await;
     }
 }

@@ -24,11 +24,11 @@ async fn main() -> Result<(), Box<dyn Error>> {
 
     println!("Initializing components...");
     let reddit = Reddit::new().await?;
-    let producer = KafkaProducer::new("localhost:9092", "reddit_posts");
+    let producer = KafkaProducer::new("localhost:9092", "text_analysis");
 
     println!("Starting main loop...");
     loop {
-        match reddit.get_hot_posts("rust", 25).await {
+        match reddit.get_hot_posts("grainme_47", 25).await {
             Ok(posts) => {
                 println!("Successfully fetched {} posts", posts.len());
                 for (title, content) in posts {
@@ -48,6 +48,6 @@ async fn main() -> Result<(), Box<dyn Error>> {
         }
 
         println!("Waiting 30 seconds before next fetch...");
-        tokio::time::sleep(std::time::Duration::from_secs(30)).await;
+        tokio::time::sleep(std::time::Duration::from_secs(10)).await;
     }
 }

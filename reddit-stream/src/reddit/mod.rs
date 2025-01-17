@@ -79,7 +79,7 @@ impl Reddit {
         println!("Fetching posts from r/{}", subreddit);
 
         let url = format!(
-            "https://oauth.reddit.com/r/{}/hot?limit={}",
+            "https://oauth.reddit.com/u/{}/hot?limit={}",
             subreddit, limit
         );
 

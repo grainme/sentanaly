@@ -75,13 +75,19 @@ impl Reddit {
         &self,
         subreddit: &str,
         limit: u32,
-    ) -> Result<Vec<(String, String)>, Box<dyn Error>> {
+        after: Option<String>, // Add this parameter
+    ) -> Result<Vec<(String, String, String)>, Box<dyn Error>> {
+        // Return tuple with post ID
         println!("Fetching posts from r/{}", subreddit);
-
-        let url = format!(
-            "https://oauth.reddit.com/u/{}/hot?limit={}",
+        let mut url = format!(
+            "https://oauth.reddit.com/r/{}/hot?limit={}",
             subreddit, limit
         );
+
+        // Add after parameter if provided
+        if let Some(after_id) = after {
+            url.push_str(&format!("&after={}", after_id));
+        }
 
         let response = self
             .client
@@ -97,7 +103,6 @@ impl Reddit {
             println!("Error fetching posts: {} - {}", status, text);
             return Err(format!("Failed to fetch posts: {} - {}", status, text).into());
         }
-
         let response_json = response.json::<serde_json::Value>().await?;
 
         let posts = response_json["data"]["children"]
@@ -108,11 +113,11 @@ impl Reddit {
                 let data = &post["data"];
                 let title = data["title"].as_str().unwrap_or("").to_string();
                 let content = data["selftext"].as_str().unwrap_or("").to_string();
-                (title, content)
+                let fullname = data["name"].as_str().unwrap_or("").to_string(); // This is the ID we need
+                (title, content, fullname)
             })
             .collect();
 
-        println!("Successfully fetched {} posts", limit);
         Ok(posts)
     }
 }
